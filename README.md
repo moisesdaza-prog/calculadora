@@ -1,0 +1,426 @@
+[index.html](https://github.com/user-attachments/files/26874913/index.html)
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora — Colegio Sara Deluque</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #157D35;
+      --green-dark: #0e5924;
+      --green-light: #e8f5ed;
+      --gold: #E89107;
+      --white: #ffffff;
+      --gray-bg: #f5f6f4;
+      --gray-border: #d8ddd6;
+      --text: #1a2e1c;
+      --text-muted: #5a7060;
+    }
+
+    body {
+      font-family: 'Lexend', system-ui, sans-serif;
+      background: var(--gray-bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* HEADER */
+    .header { background: var(--green); position: relative; overflow: hidden; }
+    .header::before {
+      content: ''; position: absolute; right: -60px; top: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      border: 35px solid rgba(255,255,255,0.06);
+    }
+    .header::after {
+      content: ''; position: absolute; left: -40px; bottom: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      border: 25px solid rgba(232,145,7,0.12);
+    }
+    .header-inner {
+      max-width: 700px; margin: 0 auto;
+      padding: 2rem 1.25rem 1.5rem;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.75rem;
+      position: relative; z-index: 2;
+    }
+    .logo-text { text-align: center; }
+    .logo-text .colegio { font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.85); display: block; }
+    .logo-text .sara    { font-size: 26px; font-weight: 600; color: #fff; display: block; line-height: 1.1; }
+    .header-divider { width: 40px; height: 3px; background: var(--gold); border-radius: 2px; }
+    .header-subtitle { font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 0.6px; text-transform: uppercase; text-align: center; }
+    .gold-bar { height: 4px; background: var(--gold); margin-bottom: 1.25rem; }
+
+    /* CONTAINER */
+    .container { max-width: 700px; margin: 0 auto; padding: 0 0.875rem 3rem; }
+
+    /* CARDS */
+    .section-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 14px; padding: 1.125rem 1rem 0.875rem;
+      margin-bottom: 0.875rem;
+      box-shadow: 0 1px 4px rgba(21,125,53,0.06);
+    }
+    .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.875rem; }
+    .badge {
+      font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border-radius: 20px; letter-spacing: 0.2px; white-space: nowrap;
+    }
+    .badge-30  { background: #e8f5ed; color: #0e5924; border: 1px solid #b2d9be; }
+    .badge-20a { background: #fff8e6; color: #7a4b00; border: 1px solid #f5d48a; }
+    .badge-20b { background: #fff8e6; color: #7a4b00; border: 1px solid #f5d48a; }
+    .badge-30b { background: #e8f5ed; color: #0e5924; border: 1px solid #b2d9be; }
+    .section-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    /* GRIDS — auto-fit para que se adapten solos */
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+      gap: 8px;
+    }
+
+    .input-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .input-label { font-size: 10px; color: var(--text-muted); text-align: center; }
+
+    /* Inputs grandes para toque fácil */
+    .note-input {
+      width: 100%; padding: 10px 4px; font-size: 15px;
+      font-family: 'Lexend', sans-serif;
+      border-radius: 8px; border: 1.5px solid var(--gray-border);
+      background: var(--gray-bg); color: var(--text);
+      text-align: center; outline: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-height: 44px; /* mínimo táctil recomendado */
+    }
+    .note-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(21,125,53,0.15); }
+    .note-input.error { border-color: #d32f2f; box-shadow: 0 0 0 3px rgba(211,47,47,0.12); background: #fff5f5; }
+
+    /* Input único (actitudinal / examen) */
+    .row-single { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .single-input {
+      width: 130px; padding: 12px 14px; font-size: 16px;
+      font-family: 'Lexend', sans-serif;
+      border-radius: 8px; border: 1.5px solid var(--gray-border);
+      background: var(--gray-bg); color: var(--text);
+      text-align: center; outline: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-height: 48px;
+    }
+    .single-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(21,125,53,0.15); }
+    .single-input.error { border-color: #d32f2f; box-shadow: 0 0 0 3px rgba(211,47,47,0.12); background: #fff5f5; }
+
+    .parcial { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+    .parcial span { font-weight: 600; color: var(--green-dark); }
+
+    /* ERROR */
+    .error-msg {
+      display: none; background: #fff0f0; border: 1px solid #e57373;
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 13px; color: #c62828; margin-bottom: 0.875rem;
+    }
+    .error-msg.visible { display: block; }
+
+    /* BOTÓN */
+    .calc-btn {
+      width: 100%; padding: 15px; font-size: 16px; font-weight: 600;
+      font-family: 'Lexend', sans-serif;
+      border-radius: 12px; border: none;
+      background: var(--green); color: #fff;
+      cursor: pointer; margin-top: 0.25rem;
+      min-height: 52px; /* fácil de tocar */
+      transition: background 0.18s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .calc-btn:hover  { background: var(--green-dark); }
+    .calc-btn:active { transform: scale(0.98); }
+
+    /* RESULTADO */
+    .result-box {
+      background: var(--white); border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      padding: 1.125rem 1rem; margin-top: 0.875rem; display: none;
+      box-shadow: 0 2px 12px rgba(21,125,53,0.10);
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px; margin-bottom: 1rem;
+    }
+    .metric {
+      background: var(--green-light); border-radius: 10px;
+      padding: 0.75rem 0.5rem; text-align: center;
+    }
+    .metric-label { font-size: 10px; color: var(--green-dark); margin-bottom: 4px; }
+    .metric-val   { font-size: 18px; font-weight: 600; color: var(--green-dark); }
+
+    .final-row {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1.5px solid var(--green-light); padding-top: 1rem; flex-wrap: wrap; gap: 10px;
+    }
+    .final-label { font-size: 13px; color: var(--text-muted); }
+    .final-nota  { font-size: 44px; font-weight: 600; line-height: 1; margin-top: 2px; }
+
+    .estado-badge {
+      font-size: 13px; padding: 6px 16px;
+      border-radius: 20px; font-weight: 600;
+    }
+    .est-ap { background: #e8f5ed; color: #0e5924; border: 1px solid #b2d9be; }
+    .est-re { background: #fdecea; color: #b71c1c; border: 1px solid #ef9a9a; }
+
+    .desempeno-row {
+      margin-top: 10px; padding: 12px 14px;
+      border-radius: 10px; font-size: 14px; font-weight: 600; text-align: center;
+    }
+    .d-bajo     { background: #fdecea; color: #b71c1c; }
+    .d-basico   { background: #d4efdf; color: #1b5e34; }
+    .d-alto     { background: #a9dfbf; color: #145a32; }
+    .d-superior { background: #2e7d52; color: #fff; }
+
+    .reset-btn {
+      font-size: 13px; color: var(--text-muted);
+      background: none; border: none; cursor: pointer;
+      text-decoration: underline; margin-top: 12px;
+      display: block; font-family: 'Lexend', sans-serif;
+      min-height: 44px; width: 100%; text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ESCALA */
+    .escala-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 14px; padding: 1.125rem 1rem; margin-top: 0.875rem;
+      box-shadow: 0 1px 4px rgba(21,125,53,0.06);
+    }
+    .escala-title {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+    }
+    .escala-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .escala-item { border-radius: 10px; padding: 10px 8px; text-align: center; }
+    .escala-item .rango { font-size: 13px; font-weight: 600; }
+    .escala-item .nivel { font-size: 11px; margin-top: 3px; }
+    .ei-bajo     { background: #fdecea; color: #b71c1c; }
+    .ei-basico   { background: #d4efdf; color: #1b5e34; }
+    .ei-alto     { background: #a9dfbf; color: #145a32; }
+    .ei-superior { background: #2e7d52; color: #fff; }
+
+    .footer {
+      text-align: center; font-size: 11px; color: var(--text-muted);
+      margin-top: 1.5rem; padding-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo-text">
+        <span class="colegio">Colegio</span>
+        <span class="sara">Sara Deluque</span>
+      </div>
+      <div class="header-divider"></div>
+      <span class="header-subtitle">Calculadora de nota final del periodo</span>
+    </div>
+  </div>
+  <div class="gold-bar"></div>
+
+  <div class="container">
+
+    <!-- 30% -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="badge badge-30">30%</span>
+        <span class="section-title">Quices y exámenes parciales</span>
+      </div>
+      <div class="inputs-grid" id="grid30">
+        <div class="input-wrap"><span class="input-label">Nota 1</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 2</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 3</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 4</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 5</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+      </div>
+      <p class="parcial">Aporte al periodo: <span id="p30">—</span></p>
+    </div>
+
+    <!-- 20% talleres -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="badge badge-20a">20%</span>
+        <span class="section-title">Talleres, cuaderno y trabajos</span>
+      </div>
+      <div class="inputs-grid" id="grid20">
+        <div class="input-wrap"><span class="input-label">Nota 1</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 2</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 3</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 4</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 5</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 6</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 7</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 8</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 9</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+        <div class="input-wrap"><span class="input-label">Nota 10</span><input class="note-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="—" oninput="validar(this);recalcParciales()"></div>
+      </div>
+      <p class="parcial">Aporte al periodo: <span id="p20">—</span></p>
+    </div>
+
+    <!-- 20% actitudinal -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="badge badge-20b">20%</span>
+        <span class="section-title">Nota actitudinal</span>
+      </div>
+      <div class="row-single">
+        <input class="single-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="0.0" id="actitudinal" oninput="validar(this);recalcParciales()">
+        <p class="parcial" style="margin:0">Aporte: <span id="pAct">—</span></p>
+      </div>
+    </div>
+
+    <!-- 30% examen -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="badge badge-30b">30%</span>
+        <span class="section-title">Examen final</span>
+      </div>
+      <div class="row-single">
+        <input class="single-input" type="number" inputmode="decimal" min="2" max="10" step="0.1" placeholder="0.0" id="examenFinal" oninput="validar(this);recalcParciales()">
+        <p class="parcial" style="margin:0">Aporte: <span id="pFinal">—</span></p>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      ⚠ Una o más notas están fuera del rango permitido (2.0 – 10.0). Corrígelas antes de calcular.
+    </div>
+
+    <button class="calc-btn" onclick="calcular()">Calcular nota final del periodo</button>
+
+    <!-- Resultado -->
+    <div class="result-box" id="resultBox">
+      <div class="result-grid">
+        <div class="metric"><div class="metric-label">30% Parciales</div><div class="metric-val" id="r30">—</div></div>
+        <div class="metric"><div class="metric-label">20% Talleres</div><div class="metric-val" id="r20">—</div></div>
+        <div class="metric"><div class="metric-label">20% Actitudinal</div><div class="metric-val" id="rAct">—</div></div>
+        <div class="metric"><div class="metric-label">30% Examen</div><div class="metric-val" id="rFin">—</div></div>
+      </div>
+      <div class="final-row">
+        <div>
+          <div class="final-label">Nota final del periodo</div>
+          <div class="final-nota" id="notaFinal">—</div>
+        </div>
+        <span class="estado-badge" id="estadoBadge"></span>
+      </div>
+      <div class="desempeno-row" id="desempenoRow"></div>
+      <button class="reset-btn" onclick="resetear()">Limpiar todo y volver a calcular</button>
+    </div>
+
+    <!-- Escala cualitativa -->
+    <div class="escala-card">
+      <p class="escala-title">Escala cualitativa de evaluación</p>
+      <div class="escala-grid">
+        <div class="escala-item ei-bajo"><div class="rango">2.0 – 6.7</div><div class="nivel">Desempeño bajo</div></div>
+        <div class="escala-item ei-basico"><div class="rango">6.8 – 8.0</div><div class="nivel">Desempeño básico</div></div>
+        <div class="escala-item ei-alto"><div class="rango">8.1 – 9.2</div><div class="nivel">Desempeño alto</div></div>
+        <div class="escala-item ei-superior"><div class="rango">9.3 – 10.0</div><div class="nivel">Desempeño superior</div></div>
+      </div>
+    </div>
+
+    <div class="footer">Colegio Sara Deluque · Riohacha, La Guajira</div>
+  </div>
+
+  <script>
+    function validar(input) {
+      const v = parseFloat(input.value);
+      if (input.value.trim() === '') input.classList.remove('error');
+      else if (isNaN(v) || v < 2 || v > 10) input.classList.add('error');
+      else input.classList.remove('error');
+      actualizarErrorMsg();
+    }
+
+    function actualizarErrorMsg() {
+      document.getElementById('errorMsg').classList.toggle('visible', document.querySelectorAll('input.error').length > 0);
+    }
+
+    function getVals(gridId) {
+      return Array.from(document.querySelectorAll('#' + gridId + ' input'))
+        .filter(i => i.value.trim() !== '' && !i.classList.contains('error'))
+        .map(i => parseFloat(i.value)).filter(v => !isNaN(v));
+    }
+
+    function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null; }
+    function fmt(n)   { return n === null ? '—' : n.toFixed(2); }
+
+    function recalcParciales() {
+      const v30 = avg(getVals('grid30'));
+      const v20 = avg(getVals('grid20'));
+      const act = parseFloat(document.getElementById('actitudinal').value);
+      const fin = parseFloat(document.getElementById('examenFinal').value);
+      const actOk = !isNaN(act) && act >= 2 && act <= 10;
+      const finOk = !isNaN(fin) && fin >= 2 && fin <= 10;
+      document.getElementById('p30').textContent    = v30!==null ? (v30*0.3).toFixed(2) : '—';
+      document.getElementById('p20').textContent    = v20!==null ? (v20*0.2).toFixed(2) : '—';
+      document.getElementById('pAct').textContent   = actOk      ? (act*0.2).toFixed(2) : '—';
+      document.getElementById('pFinal').textContent = finOk      ? (fin*0.3).toFixed(2) : '—';
+    }
+
+    function desempeno(n) {
+      if (n <= 6.7) return { label:'Desempeño bajo',    cls:'d-bajo' };
+      if (n <= 8.0) return { label:'Desempeño básico',  cls:'d-basico' };
+      if (n <= 9.2) return { label:'Desempeño alto',    cls:'d-alto' };
+      return              { label:'Desempeño superior', cls:'d-superior' };
+    }
+
+    function calcular() {
+      if (document.querySelectorAll('input.error').length > 0) {
+        document.getElementById('errorMsg').classList.add('visible');
+        document.getElementById('errorMsg').scrollIntoView({ behavior:'smooth', block:'nearest' });
+        return;
+      }
+      const v30 = avg(getVals('grid30'));
+      const v20 = avg(getVals('grid20'));
+      const act = parseFloat(document.getElementById('actitudinal').value);
+      const fin = parseFloat(document.getElementById('examenFinal').value);
+      const actOk = !isNaN(act) && act >= 2 && act <= 10;
+      const finOk = !isNaN(fin) && fin >= 2 && fin <= 10;
+      const a = v30!==null ? v30*0.3 : 0;
+      const b = v20!==null ? v20*0.2 : 0;
+      const c = actOk      ? act*0.2 : 0;
+      const d = finOk      ? fin*0.3 : 0;
+      const total = a+b+c+d;
+
+      document.getElementById('r30').textContent  = fmt(v30!==null ? a : null);
+      document.getElementById('r20').textContent  = fmt(v20!==null ? b : null);
+      document.getElementById('rAct').textContent = fmt(actOk      ? c : null);
+      document.getElementById('rFin').textContent = fmt(finOk      ? d : null);
+
+      const nf = document.getElementById('notaFinal');
+      nf.textContent = total.toFixed(2);
+      nf.style.color = total >= 6.8 ? '#157D35' : '#b71c1c';
+
+      const badge = document.getElementById('estadoBadge');
+      badge.textContent = total >= 6.8 ? 'Aprobado' : 'Reprobado';
+      badge.className   = 'estado-badge ' + (total >= 6.8 ? 'est-ap' : 'est-re');
+
+      const di = desempeno(total);
+      const dr = document.getElementById('desempenoRow');
+      dr.textContent = di.label;
+      dr.className   = 'desempeno-row ' + di.cls;
+
+      const box = document.getElementById('resultBox');
+      box.style.display = 'block';
+      box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+
+    function resetear() {
+      document.querySelectorAll('input[type=number]').forEach(i => { i.value=''; i.classList.remove('error'); });
+      document.getElementById('resultBox').style.display = 'none';
+      document.getElementById('errorMsg').classList.remove('visible');
+      ['p30','p20','pAct','pFinal'].forEach(id => document.getElementById(id).textContent = '—');
+    }
+  </script>
+</body>
+</html>
